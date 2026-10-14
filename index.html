@@ -1,0 +1,1905 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title>ROYAL GYM & DAY | Ishak • Issam • Youness • Yassin</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Cairo -->
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --gold-light: #f3e5ab;
+            --gold-main: #d4af37;
+            --gold-dark: #996515;
+            --obsidian: #07080c;
+            --card-bg: rgba(16, 19, 28, 0.92);
+        }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--obsidian);
+            background-image: 
+                radial-gradient(circle at 15% 10%, rgba(212, 175, 55, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 90%, rgba(212, 175, 55, 0.05) 0%, transparent 40%);
+            color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .luxury-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(212, 175, 55, 0.16);
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.7);
+        }
+        .gold-gradient-text {
+            background: linear-gradient(135deg, #fff6d6 0%, #d4af37 50%, #aa7c11 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .gold-btn {
+            background: linear-gradient(135deg, #d4af37 0%, #b38728 50%, #996515 100%);
+            color: #07080c;
+            font-weight: 800;
+            box-shadow: 0 4px 18px rgba(212, 175, 55, 0.25);
+        }
+        .gold-btn:hover {
+            filter: brightness(1.08);
+        }
+        .gold-border-glow {
+            border-color: #d4af37 !important;
+            box-shadow: 0 0 20px rgba(212, 175, 55, 0.22);
+        }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes floatSlow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .animate-float { animation: floatSlow 2.5s infinite ease-in-out; }
+    </style>
+</head>
+<body class="min-h-screen pb-36 select-none">
+
+    <!-- ========================================== -->
+    <!-- 1. VIP AUTHENTICATION & PROFILE GATEWAY    -->
+    <!-- ========================================== -->
+    <div id="authScreen" class="fixed inset-0 z-50 bg-[#07080c] flex flex-col items-center justify-center p-4 overflow-y-auto">
+        <div class="max-w-xl w-full space-y-6 my-auto py-6">
+            <!-- Brand Header -->
+            <div class="text-center space-y-2">
+                <div class="w-16 h-16 rounded-3xl gold-btn mx-auto flex items-center justify-center shadow-2xl mb-3">
+                    <i class="fa-solid fa-crown text-2xl text-black"></i>
+                </div>
+                <span class="text-[11px] font-extrabold tracking-widest uppercase px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300">
+                    VIP Private Club • 3 Days Split
+                </span>
+                <h1 class="text-3xl sm:text-4xl font-black gold-gradient-text pt-1">نادي النخبة وتنظيم اليوم</h1>
+                <p class="text-xs sm:text-sm text-slate-400">اختر حسابك الخاص للدخول — كل حساب محمي برمز سري ومفصّل حسب الوزن والطول</p>
+            </div>
+
+            <!-- 4 Members Grid -->
+            <div id="profilesGrid" class="grid grid-cols-2 gap-3.5">
+                <!-- Populated dynamically via JS -->
+            </div>
+
+            <!-- PIN Entry / Initial Setup Box -->
+            <div id="pinBox" class="luxury-card rounded-3xl p-5 hidden space-y-4 border border-amber-500/40">
+                <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                    <div class="flex items-center gap-2.5">
+                        <div class="w-9 h-9 rounded-xl gold-btn flex items-center justify-center font-black text-sm" id="selectedAvatar">IS</div>
+                        <div>
+                            <h3 id="selectedMemberTitle" class="font-black text-base text-white"></h3>
+                            <p id="selectedMemberSub" class="text-[11px] text-amber-300/90"></p>
+                        </div>
+                    </div>
+                    <button onclick="closePinBox()" class="text-slate-400 hover:text-white">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- First Time Setup Fields (Weight, Height, New PIN) -->
+                <div id="firstTimeFields" class="space-y-3 hidden">
+                    <div class="p-3 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-200 leading-relaxed">
+                        <i class="fa-solid fa-wand-magic-sparkles ml-1"></i>
+                        أدخل وزنك وطولك وعيّن رمزك السري الخاص (4 أرقام) ليقوم التطبيق بتصميم برنامجك وأوزانك تلقائياً وقفل حسابك.
+                    </div>
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="text-xs font-bold text-slate-300 block mb-1">الوزن الحالي (kg)</label>
+                            <input id="setupWeight" type="number" placeholder="مثال: 68" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-center font-black text-amber-400 text-sm focus:outline-none focus:border-amber-400">
+                        </div>
+                        <div>
+                            <label class="text-xs font-bold text-slate-300 block mb-1">الطول (cm)</label>
+                            <input id="setupHeight" type="number" placeholder="مثال: 176" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-center font-black text-amber-400 text-sm focus:outline-none focus:border-amber-400">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PIN Input -->
+                <div>
+                    <label id="pinLabel" class="text-xs font-bold text-slate-300 block mb-1.5 text-center">أدخل الرمز السري الخاص بك (PIN)</label>
+                    <input id="pinInput" type="password" inputmode="numeric" maxlength="6" placeholder="••••" class="w-full bg-slate-950 border border-amber-500/40 rounded-2xl px-4 py-3 text-center text-2xl tracking-[0.6em] font-black text-amber-300 focus:outline-none focus:border-amber-400">
+                    <p id="pinError" class="text-xs text-rose-400 text-center mt-2 hidden font-bold"></p>
+                </div>
+
+                <button onclick="handleAuthSubmit()" class="w-full py-3.5 rounded-2xl gold-btn text-sm transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-unlock-keyhole"></i>
+                    <span id="authSubmitBtnText">دخول إلى حسابي</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 2. MAIN APP INTERFACE (LOCKED PER USER)    -->
+    <!-- ========================================== -->
+    <div id="mainApp" class="hidden">
+        <!-- Top Luxury Header -->
+        <header class="sticky top-0 z-30 luxury-card px-4 py-3 border-b border-amber-500/20">
+            <div class="max-w-4xl mx-auto flex items-center justify-between gap-2">
+                <div class="flex items-center gap-3">
+                    <div id="headerAvatar" class="w-11 h-11 rounded-2xl gold-btn flex items-center justify-center text-base font-black shadow-lg">
+                        IS
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <h1 id="headerUserName" class="text-base sm:text-lg font-black gold-gradient-text">Ishak</h1>
+                            <span id="headerBodyBadge" class="text-[10px] font-extrabold bg-amber-500/15 text-amber-300 border border-amber-500/30 px-2 py-0.5 rounded-full"></span>
+                        </div>
+                        <p id="headerMetricsText" class="text-[11px] text-slate-400 font-semibold"></p>
+                    </div>
+                </div>
+
+                <!-- Header Quick Actions -->
+                <div class="flex items-center gap-2">
+                    <button onclick="openTimerModal()" class="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 border border-amber-500/30 px-3 py-2 rounded-xl text-xs font-bold transition">
+                        <i class="fa-solid fa-stopwatch text-amber-400"></i>
+                        <span id="headerTimerText" class="text-amber-100">الراحة</span>
+                    </button>
+                    <button onclick="lockProfile()" title="قفل الحساب وتغيير المستخدم" class="flex items-center gap-1.5 bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/30 px-3 py-2 rounded-xl text-xs font-bold transition">
+                        <i class="fa-solid fa-lock"></i>
+                        <span class="hidden sm:inline">قفل الحساب</span>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-4xl mx-auto px-4 pt-4 space-y-5">
+
+            <!-- Personalized Biometric & Nutrition Strip -->
+            <section class="luxury-card rounded-3xl p-4 border border-amber-500/20">
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+                    <div class="bg-slate-950/70 rounded-2xl p-2.5 border border-slate-800/80">
+                        <span class="text-[11px] text-slate-400 block">الوزن والطول</span>
+                        <span id="statWeightHeight" class="text-sm font-black text-amber-300 mt-0.5 block">-- kg • -- cm</span>
+                    </div>
+                    <div class="bg-slate-950/70 rounded-2xl p-2.5 border border-slate-800/80">
+                        <span class="text-[11px] text-slate-400 block">مؤشر الكتلة (BMI)</span>
+                        <span id="statBMI" class="text-sm font-black text-white mt-0.5 block">--</span>
+                    </div>
+                    <div class="bg-slate-950/70 rounded-2xl p-2.5 border border-slate-800/80">
+                        <span class="text-[11px] text-slate-400 block">احتياج البروتين اليومي</span>
+                        <span id="statProtein" class="text-sm font-black text-emerald-400 mt-0.5 block">-- g</span>
+                    </div>
+                    <div class="bg-slate-950/70 rounded-2xl p-2.5 border border-slate-800/80">
+                        <span class="text-[11px] text-slate-400 block">السعرات المستهدفة</span>
+                        <span id="statCalories" class="text-sm font-black text-sky-400 mt-0.5 block">-- kcal</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4 Main Navigation Tabs -->
+            <div class="grid grid-cols-4 gap-1.5 p-1.5 bg-slate-950/90 rounded-2xl border border-amber-500/20">
+                <button id="tabBtn_workout" onclick="switchTab('workout')" class="py-2.5 px-2 rounded-xl font-extrabold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1.5 gold-btn">
+                    <i class="fa-solid fa-dumbbell"></i>
+                    <span>تماريني (3 جولات)</span>
+                </button>
+                <button id="tabBtn_schedule" onclick="switchTab('schedule')" class="py-2.5 px-2 rounded-xl font-extrabold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1.5 text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-calendar-check"></i>
+                    <span>تنظيم نهاري</span>
+                </button>
+                <button id="tabBtn_playlist" onclick="switchTab('playlist')" class="py-2.5 px-2 rounded-xl font-extrabold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1.5 text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-headphones"></i>
+                    <span>صوتياتي Playlist</span>
+                </button>
+                <button id="tabBtn_body" onclick="switchTab('body')" class="py-2.5 px-2 rounded-xl font-extrabold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1.5 text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-sliders"></i>
+                    <span>جسمي والحماية</span>
+                </button>
+            </div>
+
+            <!-- Days of the Week Bar (Shown in Workout & Schedule tabs) -->
+            <section id="daysBarSection">
+                <div id="daysContainer" class="flex gap-2 overflow-x-auto hide-scroll pb-1">
+                    <!-- Populated via JS -->
+                </div>
+            </section>
+
+            <!-- Daily Banner & Progress (Shown in Workout & Schedule tabs) -->
+            <section id="dayBannerSection" class="luxury-card rounded-3xl p-4 relative overflow-hidden">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div>
+                        <span id="dayBadge" class="inline-block px-3 py-0.5 rounded-full text-[11px] font-extrabold bg-amber-500/15 text-amber-300 border border-amber-500/30 mb-1"></span>
+                        <h2 id="dayTitle" class="text-lg sm:text-xl font-black text-white"></h2>
+                        <p id="daySubtitle" class="text-xs text-slate-400 mt-0.5"></p>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div class="text-center">
+                            <span id="setsStat" class="block text-base font-black text-amber-400">0/0</span>
+                            <span class="text-[10px] text-slate-400">جولات التمرين</span>
+                        </div>
+                        <div class="h-8 w-[1px] bg-slate-800"></div>
+                        <div class="text-center">
+                            <span id="tasksStat" class="block text-base font-black text-emerald-400">0/0</span>
+                            <span class="text-[10px] text-slate-400">مهام النهار</span>
+                        </div>
+                        <button onclick="resetDayProgress()" title="تصفير إنجاز اليوم" class="w-9 h-9 rounded-xl bg-slate-900 hover:bg-rose-500/20 text-slate-400 hover:text-rose-400 border border-slate-800 flex items-center justify-center transition">
+                            <i class="fa-solid fa-rotate-right text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+                <!-- Progress Bar -->
+                <div class="mt-3.5">
+                    <div class="flex justify-between text-[11px] font-bold mb-1">
+                        <span class="text-slate-400">نسبة إنجاز اليوم</span>
+                        <span id="progressPercent" class="text-amber-300">0%</span>
+                    </div>
+                    <div class="w-full h-2 bg-slate-900 rounded-full overflow-hidden">
+                        <div id="progressBar" class="h-full gold-btn rounded-full transition-all duration-500" style="width: 0%"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- TAB 1: WORKOUTS (3 SETS PER EXERCISE)      -->
+            <!-- ========================================== -->
+            <section id="section_workout" class="space-y-4">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <h3 class="text-sm font-extrabold text-amber-200 flex items-center gap-2">
+                        <i class="fa-solid fa-fire-flame-curved text-amber-400"></i>
+                        <span>تمارين اليوم (مضبوطة على 3 جولات وحسب وزنك وطولك)</span>
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <button onclick="openSwapModal()" class="text-xs font-bold bg-slate-900 hover:bg-slate-800 text-slate-200 border border-slate-700 px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-right-left text-amber-400"></i>
+                            <span>تبديل يوم التمرين</span>
+                        </button>
+                        <button onclick="openAddExerciseModal()" class="text-xs font-bold gold-btn px-3 py-1.5 rounded-xl transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>إضافة تمرين</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div id="exercisesList" class="space-y-4">
+                    <!-- Populated via JS -->
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- TAB 2: DAILY SCHEDULE                      -->
+            <!-- ========================================== -->
+            <section id="section_schedule" class="space-y-4 hidden">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-sm font-extrabold text-amber-200 flex items-center gap-2">
+                        <i class="fa-solid fa-clock text-amber-400"></i>
+                        <span>جدول تنظيم نهاري ومهامي الخاصة</span>
+                    </h3>
+                    <button onclick="openAddTaskModal()" class="text-xs font-bold gold-btn px-3.5 py-1.5 rounded-xl transition flex items-center gap-1.5">
+                        <i class="fa-solid fa-plus"></i>
+                        <span>إضافة مهمة جديدة</span>
+                    </button>
+                </div>
+
+                <div id="tasksList" class="space-y-2.5">
+                    <!-- Populated via JS -->
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- TAB 3: PERSONAL PLAYLIST & AUDIO HUB       -->
+            <!-- ========================================== -->
+            <section id="section_playlist" class="space-y-4 hidden">
+                <div class="luxury-card rounded-3xl p-5 space-y-4">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-800 pb-3">
+                        <div>
+                            <h3 class="text-base font-black gold-gradient-text flex items-center gap-2">
+                                <i class="fa-solid fa-music"></i>
+                                <span>مكتبتي الصوتية الخاصة (أناشيد • قرآن • حماس • Playlist)</span>
+                            </h3>
+                            <p class="text-xs text-slate-400 mt-0.5">قائمة التشغيل هذه خاصة بحسابك وحدك؛ يمكنك رفع ملفات صوتية من جهازك أو إضافة روابط</p>
+                        </div>
+                        <!-- Upload local audio file from phone/PC -->
+                        <label class="cursor-pointer gold-btn text-xs px-3.5 py-2 rounded-xl flex items-center gap-1.5 transition">
+                            <i class="fa-solid fa-upload"></i>
+                            <span>اختيار ملف صوتي من جهازي</span>
+                            <input type="file" accept="audio/*" class="hidden" onchange="handleLocalAudioUpload(event)">
+                        </label>
+                    </div>
+
+                    <!-- Add Custom Track / Link Form -->
+                    <div class="grid grid-cols-1 sm:grid-cols-4 gap-2.5 bg-slate-950/80 p-3.5 rounded-2xl border border-slate-800">
+                        <input id="trackTitleInput" type="text" placeholder="اسم المقطع أو النشيد أو السورة..." class="sm:col-span-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                        <select id="trackCategoryInput" class="bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                            <option value="أناشيد حماسية">🎙️ أناشيد حماسية</option>
+                            <option value="قرآن كريم">📖 قرآن كريم</option>
+                            <option value="موسيقى / تحفيز">🔥 موسيقى / تحفيز</option>
+                            <option value="Playlist خارجي">🎧 رابط Playlist</option>
+                        </select>
+                        <input id="trackUrlInput" type="url" placeholder="رابط MP3 مباشر أو رابط YouTube / Spotify / SoundCloud" class="sm:col-span-1 bg-slate-900 border border-slate-700 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-amber-400">
+                        <button onclick="addCustomTrack()" class="gold-btn rounded-xl py-2 px-3 text-xs font-black transition flex items-center justify-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i>
+                            <span>إضافة للمكتبة</span>
+                        </button>
+                    </div>
+
+                    <!-- Embedded YouTube / External Player Box (if a YT track is selected) -->
+                    <div id="externalPlayerBox" class="hidden rounded-2xl overflow-hidden border border-amber-500/30 bg-black aspect-video max-h-64 mx-auto">
+                        <!-- Injected dynamically -->
+                    </div>
+
+                    <!-- Tracks List -->
+                    <div id="playlistContainer" class="space-y-2.5">
+                        <!-- Populated via JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- ========================================== -->
+            <!-- TAB 4: BODY STATS & SECURITY SETTINGS      -->
+            <!-- ========================================== -->
+            <section id="section_body" class="space-y-4 hidden">
+                <div class="luxury-card rounded-3xl p-5 space-y-5">
+                    <div class="border-b border-slate-800 pb-3">
+                        <h3 class="text-base font-black gold-gradient-text flex items-center gap-2">
+                            <i class="fa-solid fa-scale-balanced"></i>
+                            <span>تحديث الوزن والطول وإعادة ضبط أوزان التمارين</span>
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-1">عند تغيير وزنك أو طولك، سيقوم التطبيق بحساب مؤشر كتلة جسمك وتعديل الأوزان والتكرارات في جدولك تلقائياً.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
+                            <label class="text-xs font-bold text-slate-400 block mb-1.5">الوزن الحالي (kg)</label>
+                            <input id="editWeightInput" type="number" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl px-3 py-2.5 text-lg font-black text-amber-300 text-center">
+                        </div>
+                        <div class="bg-slate-950/80 p-4 rounded-2xl border border-slate-800">
+                            <label class="text-xs font-bold text-slate-400 block mb-1.5">الطول الحالي (cm)</label>
+                            <input id="editHeightInput" type="number" class="w-full bg-slate-900 border border-amber-500/30 rounded-xl px-3 py-2.5 text-lg font-black text-amber-300 text-center">
+                        </div>
+                    </div>
+
+                    <button onclick="saveMetricsAndRecalculate()" class="w-full py-3.5 rounded-2xl gold-btn text-sm transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        <span>حفظ وتوليد التمارين والأوزان المناسبة لوزني وطولي (3 جولات)</span>
+                    </button>
+
+                    <!-- PIN Change Box -->
+                    <div class="pt-4 border-t border-slate-800 space-y-3">
+                        <h4 class="text-sm font-extrabold text-white flex items-center gap-2">
+                            <i class="fa-solid fa-shield-halved text-amber-400"></i>
+                            <span>تغيير الرمز السري لحسابك (PIN)</span>
+                        </h4>
+                        <div class="flex gap-2">
+                            <input id="newPinInput" type="password" inputmode="numeric" maxlength="6" placeholder="أدخل الرمز السري الجديد (4 أرقام)" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-center font-black text-amber-300">
+                            <button onclick="updateUserPin()" class="bg-slate-800 hover:bg-slate-700 text-amber-300 border border-amber-500/30 font-bold text-xs px-5 rounded-xl transition">
+                                تحديث الرمز
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- PERSISTENT BOTTOM AUDIO PLAYER BAR -->
+        <div class="fixed bottom-0 inset-x-0 z-40 luxury-card border-t border-amber-500/25 px-4 py-2.5">
+            <div class="max-w-4xl mx-auto flex items-center justify-between gap-3">
+                <div class="flex items-center gap-3 min-w-0">
+                    <div class="w-10 h-10 rounded-xl bg-amber-500/15 border border-amber-500/30 flex items-center justify-center text-amber-300 shrink-0">
+                        <i id="playerIcon" class="fa-solid fa-headphones"></i>
+                    </div>
+                    <div class="min-w-0">
+                        <p id="nowPlayingTitle" class="text-xs font-extrabold text-white truncate">اختر مقطعاً من مكتبتك الصوتية</p>
+                        <p id="nowPlayingSub" class="text-[10px] text-amber-300/80 truncate">مشغل خاص بحسابك أثناء التمرين</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2 shrink-0">
+                    <audio id="mainAudioElement" class="hidden" controls></audio>
+                    <button onclick="prevTrack()" class="w-8 h-8 rounded-lg bg-slate-900 text-slate-300 hover:text-white flex items-center justify-center border border-slate-800">
+                        <i class="fa-solid fa-backward-step text-xs"></i>
+                    </button>
+                    <button id="playPauseBtn" onclick="toggleAudioPlay()" class="w-10 h-10 rounded-xl gold-btn flex items-center justify-center">
+                        <i class="fa-solid fa-play text-xs"></i>
+                    </button>
+                    <button onclick="nextTrack()" class="w-8 h-8 rounded-lg bg-slate-900 text-slate-300 hover:text-white flex items-center justify-center border border-slate-800">
+                        <i class="fa-solid fa-forward-step text-xs"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MODALS (VIDEO, TIMER, SWAP, ADD ITEMS)     -->
+    <!-- ========================================== -->
+
+    <!-- VIDEO & EXECUTION MODAL -->
+    <div id="videoModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="luxury-card max-w-lg w-full rounded-3xl overflow-hidden border border-amber-500/40 shadow-2xl">
+            <div class="flex items-center justify-between px-5 py-4 border-b border-slate-800">
+                <div>
+                    <span id="modalMuscleTag" class="text-[11px] font-bold text-amber-400"></span>
+                    <h3 id="modalExerciseName" class="text-base sm:text-lg font-black text-white"></h3>
+                </div>
+                <button onclick="closeVideoModal()" class="w-9 h-9 rounded-full bg-slate-900 text-slate-400 hover:text-white flex items-center justify-center">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="p-5 space-y-4">
+                <div id="videoContainer" class="relative rounded-2xl overflow-hidden bg-slate-950 border border-slate-800 aspect-video flex flex-col items-center justify-center">
+                    <!-- Dynamic Video / Visual Guide -->
+                </div>
+
+                <div class="bg-slate-950/90 border border-slate-800 rounded-2xl p-4 space-y-1.5">
+                    <h4 class="text-xs font-extrabold text-amber-300 flex items-center gap-1.5">
+                        <i class="fa-solid fa-circle-check"></i>
+                        <span>الشرح الفني للأداء الصحيح (3 جولات):</span>
+                    </h4>
+                    <p id="modalExerciseTips" class="text-xs text-slate-300 leading-relaxed"></p>
+                </div>
+
+                <a id="modalYoutubeBtn" href="#" target="_blank" class="w-full bg-red-600 hover:bg-red-500 text-white font-bold text-xs py-3 px-4 rounded-xl flex items-center justify-center gap-2 transition">
+                    <i class="fa-brands fa-youtube text-base"></i>
+                    <span>فتح فيديو الشرح العملي مباشرة على YouTube</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- REST TIMER MODAL -->
+    <div id="timerModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="luxury-card max-w-sm w-full rounded-3xl p-6 text-center border border-amber-500/40 space-y-5">
+            <div class="flex justify-between items-center">
+                <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-stopwatch text-amber-400"></i>
+                    <span>مؤقت الراحة بين الجولات الثلاث</span>
+                </h3>
+                <button onclick="closeTimerModal()" class="text-slate-400 hover:text-white">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <div class="py-5">
+                <div id="timerDisplay" class="text-6xl font-black gold-gradient-text tracking-wider font-mono">01:30</div>
+                <p class="text-xs text-slate-400 mt-2">يعمل تلقائياً عند إنهاء أي جولة من الجولات الثلاث</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2">
+                <button onclick="setTimer(60)" class="py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-200 border border-slate-700">60 ثانية</button>
+                <button onclick="setTimer(90)" class="py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-amber-300 border border-amber-500/40">90 ثانية</button>
+                <button onclick="setTimer(120)" class="py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-xs font-bold text-slate-200 border border-slate-700">120 ثانية</button>
+            </div>
+
+            <div class="flex gap-2">
+                <button id="startPauseTimerBtn" onclick="toggleTimer()" class="flex-1 py-3 rounded-xl gold-btn text-sm transition">
+                    بدء المؤقت
+                </button>
+                <button onclick="resetTimer()" class="px-4 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-slate-300 font-bold text-sm border border-slate-800">
+                    إعادة
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SWAP DAYS MODAL -->
+    <div id="swapModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="luxury-card max-w-md w-full rounded-3xl p-5 border border-amber-500/40 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-extrabold text-base text-white flex items-center gap-2">
+                    <i class="fa-solid fa-right-left text-amber-400"></i>
+                    <span>تبديل أيام التمرين الثلاثة</span>
+                </h3>
+                <button onclick="closeSwapModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+                <div>
+                    <label class="text-xs font-bold text-slate-400 block mb-1">اليوم الأول</label>
+                    <select id="swapDay1" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white">
+                        <option value="monday">الإثنين</option>
+                        <option value="tuesday">الثلاثاء</option>
+                        <option value="wednesday">الأربعاء</option>
+                        <option value="thursday">الخميس</option>
+                        <option value="friday">الجمعة</option>
+                        <option value="saturday">السبت</option>
+                        <option value="sunday">الأحد</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 block mb-1">اليوم الثاني</label>
+                    <select id="swapDay2" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white">
+                        <option value="monday">الإثنين</option>
+                        <option value="tuesday">الثلاثاء</option>
+                        <option value="wednesday">الأربعاء</option>
+                        <option value="thursday" selected>الخميس</option>
+                        <option value="friday">الجمعة</option>
+                        <option value="saturday">السبت</option>
+                        <option value="sunday">الأحد</option>
+                    </select>
+                </div>
+            </div>
+            <button onclick="confirmSwapDays()" class="w-full py-3 rounded-xl gold-btn text-sm transition">
+                تبديل اليومين في جدولي الخاص
+            </button>
+        </div>
+    </div>
+
+    <!-- ADD EXERCISE MODAL -->
+    <div id="addExerciseModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="luxury-card max-w-md w-full rounded-3xl p-5 border border-amber-500/40 space-y-3 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-extrabold text-base text-white">إضافة تمرين جديد (3 جولات)</h3>
+                <button onclick="closeAddExerciseModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-xs font-bold text-slate-400 block mb-1">اسم التمرين</label>
+                    <input id="newExName" type="text" placeholder="مثال: تفتيح صدر بالكابل (Cable Fly)" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 block mb-1">العضلة المستهدفة</label>
+                        <input id="newExMuscle" type="text" placeholder="مثال: الصدر" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                    </div>
+                    <div>
+                        <label class="text-xs font-bold text-slate-400 block mb-1">الجولات × العدات</label>
+                        <input id="newExReps" type="text" value="3 جولات × 10-12" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                    </div>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 block mb-1">رابط صورة التمرين (اختياري)</label>
+                    <input id="newExImage" type="url" placeholder="اتركه فارغاً لاستخدام صورة افتراضية" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 block mb-1">رابط فيديو الشرح (اختياري)</label>
+                    <input id="newExVideo" type="url" placeholder="رابط YouTube أو MP4" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 block mb-1">نصائح الأداء</label>
+                    <textarea id="newExTips" rows="2" placeholder="تحكم في الوزن طوال الجولات الثلاث..." class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-sm text-white"></textarea>
+                </div>
+                <button onclick="saveNewExercise()" class="w-full py-3 rounded-xl gold-btn text-sm transition">إضافة إلى تمريني</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ADD TASK MODAL -->
+    <div id="addTaskModal" class="fixed inset-0 z-50 bg-black/85 backdrop-blur-md hidden items-center justify-center p-4">
+        <div class="luxury-card max-w-md w-full rounded-3xl p-5 border border-amber-500/40 space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                <h3 class="font-extrabold text-base text-white">إضافة مهمة لجدول نهاري</h3>
+                <button onclick="closeAddTaskModal()" class="text-slate-400 hover:text-white"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label class="text-xs font-bold text-slate-400 block mb-1">الوقت</label>
+                    <input id="newTaskTime" type="time" value="16:00" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 block mb-1">عنوان المهمة</label>
+                    <input id="newTaskTitle" type="text" placeholder="مثال: مراجعة الفيزياء / وجبة بعد التمرين" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-400 block mb-1">التصنيف</label>
+                    <select id="newTaskCategory" class="w-full bg-slate-950 border border-slate-700 rounded-xl px-3 py-2.5 text-sm text-white">
+                        <option value="دراسة">📚 دراسة ومراجعة</option>
+                        <option value="تغذية">🥗 تغذية ووجبات</option>
+                        <option value="رياضة">🏋️‍♂️ رياضة ونادي</option>
+                        <option value="شخصي">⚡ مهام شخصية</option>
+                    </select>
+                </div>
+                <button onclick="saveNewTask()" class="w-full py-3 rounded-xl gold-btn text-sm transition">حفظ المهمة</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // =========================================================================
+        // 1. FOUR VIP MEMBERS CONFIGURATION (Ishak, Issam, Youness, Yassin)
+        // =========================================================================
+        const MEMBERS_META = {
+            ishak:   { id: 'ishak',   name: 'Ishak',   arName: 'إسحاق', initials: 'IS', defaultWeight: 68, defaultHeight: 176 },
+            issam:   { id: 'issam',   name: 'Issam',   arName: 'عصام',  initials: 'IC', defaultWeight: 74, defaultHeight: 178 },
+            youness: { id: 'youness', name: 'Youness', arName: 'يونس',  initials: 'YN', defaultWeight: 65, defaultHeight: 173 },
+            yassin:  { id: 'yassin',  name: 'Yassin',  arName: 'ياسين', initials: 'YS', defaultWeight: 78, defaultHeight: 180 }
+        };
+
+        const dayOrder = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        const jsDayMap = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+
+        let currentUserKey = null;
+        let pendingAuthUserKey = null;
+        let currentDayKey = jsDayMap[new Date().getDay()] || 'monday';
+        let activeTab = 'workout';
+        let currentTrackIndex = 0;
+
+        // =========================================================================
+        // 2. BIOMETRIC WORKOUT GENERATOR (3 SETS PER EXERCISE, SCALED BY WEIGHT/HEIGHT)
+        // =========================================================================
+        function analyzeBodyStats(weight, heightCm) {
+            const hMeters = heightCm / 100;
+            const bmi = +(weight / (hMeters * hMeters)).toFixed(1);
+            let modeTitle = '';
+            let repScheme = '';
+            let restRecommended = 90;
+            let calories = Math.round(weight * 33);
+            let protein = Math.round(weight * 2.0);
+
+            if (bmi < 20.0) {
+                modeTitle = 'تضخيم وبناء عضلي صافي (Lean Bulk)';
+                repScheme = '3 جولات × 8-10 عدات (أوزان ثقيلة مركزة)';
+                restRecommended = 105;
+                calories = Math.round(weight * 38);
+            } else if (bmi <= 24.9) {
+                modeTitle = 'قوة وضخامة متناسقة (Athletic Hypertrophy)';
+                repScheme = '3 جولات × 10-12 عدة (توازن قوة وحجم)';
+                restRecommended = 90;
+                calories = Math.round(weight * 33);
+            } else {
+                modeTitle = 'تنشيف وبناء عضل صافي (Shred & Recomp)';
+                repScheme = '3 جولات × 12-15 عدة (كثافة عالية وحرق)';
+                restRecommended = 60;
+                calories = Math.round(weight * 27);
+                protein = Math.round(weight * 2.2);
+            }
+
+            return { bmi, modeTitle, repScheme, restRecommended, calories, protein };
+        }
+
+        function scaleWeight(weightKg, factor) {
+            // Rounds to nearest 2.5 kg for realistic gym plates/dumbbells
+            return Math.max(5, Math.round((weightKg * factor) / 2.5) * 2.5);
+        }
+
+        function buildPersonalizedWeek(weight, height) {
+            const analysis = analyzeBodyStats(weight, height);
+            const r = analysis.repScheme;
+
+            return {
+                monday: {
+                    id: 'monday',
+                    shortName: 'الإثنين 🔥',
+                    isGymDay: true,
+                    badge: `الحصة 1 من 3 • يوم الدفع (Push) • ${analysis.modeTitle}`,
+                    title: 'الصدر + الأكتاف + الترايسبس (3 جولات)',
+                    subtitle: `الأوزان والتكرارات مضبوطة لوزن ${weight}kg وطول ${height}cm`,
+                    exercises: [
+                        {
+                            id: 'm1',
+                            name: 'ضغط صدر بالبار مستوي (Barbell Bench Press)',
+                            muscle: 'الصدر الأوسط',
+                            reps: r,
+                            weight: scaleWeight(weight, 0.75),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Barbell Bench Press proper form tutorial',
+                            tips: 'ثبّت لوحي الكتف على المقعد، انزل بالبار ببطء حتى منتصف الصدر ثم ادفع بقوة خلال 3 جولات متقنة.'
+                        },
+                        {
+                            id: 'm2',
+                            name: 'ضغط صدر علوي بالدمبل (Incline Dumbbell Press)',
+                            muscle: 'الصدر العلوي',
+                            reps: r,
+                            weight: scaleWeight(weight, 0.28),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1583454110551-21f2fa2afe61?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Incline Dumbbell Press form guide',
+                            tips: 'زاوية المقعد 30 درجة؛ انزل بالدمبلز بتحكم كامل لتحفيز الصدر العلوي في 3 جولات.'
+                        },
+                        {
+                            id: 'm3',
+                            name: 'ضغط أكتاف بالدمبل جالساً (Seated Shoulder Press)',
+                            muscle: 'الكتف الأمامي والجانبي',
+                            reps: r,
+                            weight: scaleWeight(weight, 0.24),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1532029837206-abbe2b7620e3?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Seated Dumbbell Shoulder Press form',
+                            tips: 'حافظ على استقامة الظهر وادفع الدمبلز للأعلى دون قفل المرفقين بعنف.'
+                        },
+                        {
+                            id: 'm4',
+                            name: 'رفرفة أكتاف جانبي بالدمبل (Lateral Raises)',
+                            muscle: 'الكتف الجانبي (عرض الكتف)',
+                            reps: '3 جولات × 12-15 عدة',
+                            weight: scaleWeight(weight, 0.14),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Dumbbell Lateral Raise proper form',
+                            tips: 'ارفع المرفقين لمستوى الكتف مع ثبات الجذع تماماً لعزل الكتف الجانبي.'
+                        },
+                        {
+                            id: 'm5',
+                            name: 'دفع الحبل للترايسبس (Triceps Rope Pushdown)',
+                            muscle: 'الترايسبس الشامل',
+                            reps: '3 جولات × 12 عدة',
+                            weight: scaleWeight(weight, 0.40),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Triceps Rope Pushdown tutorial',
+                            tips: 'ثبّت المرفقين بجانب الجسم وافتح الحبل في أسفل الحركة مع عصر العضلة.'
+                        }
+                    ],
+                    tasks: [
+                        { id: 't1', time: '07:30', title: 'وجبة فطور غنية بالبروتين والشوفان', category: 'تغذية', done: false },
+                        { id: 't2', time: '08:30', title: 'الفترة الصباحية (دراسة / التزامات)', category: 'دراسة', done: false },
+                        { id: 't3', time: '16:30', title: 'وجبة الطاقة قبل التمرين (ساعة ونصف قبل النادي)', category: 'تغذية', done: false },
+                        { id: 't4', time: '18:00', title: 'حصة النادي (1/3): يوم الدفع (3 جولات لكل تمرين)', category: 'رياضة', done: false },
+                        { id: 't5', time: '20:30', title: 'وجبة الاستشفاء + مراجعة المساء', category: 'دراسة', done: false }
+                    ]
+                },
+                tuesday: {
+                    id: 'tuesday',
+                    shortName: 'الثلاثاء 💤',
+                    isGymDay: false,
+                    badge: 'يوم راحة واستشفاء عضلي',
+                    title: 'راحة من النادي وتنظيم النهار',
+                    subtitle: 'العضلات تبنى أثناء الراحة والنوم الجيد',
+                    exercises: [
+                        {
+                            id: 'tu1',
+                            name: 'إطالات مرونة واستشفاء عضلي (Mobility & Recovery)',
+                            muscle: 'استشفاء كامل الجسم',
+                            reps: '3 جولات × 5 دقائق',
+                            weight: 0,
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: '15 min full body stretching mobility routine',
+                            tips: 'تمارين إطالة خفيفة للصدر والأكتاف لتسريع الاستشفاء بعد حصة الإثنين.'
+                        }
+                    ],
+                    tasks: [
+                        { id: 'tu_t1', time: '08:00', title: 'الفطور الصباحي المتوازن', category: 'تغذية', done: false },
+                        { id: 'tu_t2', time: '17:00', title: 'حصة مراجعة مركزة وإنهاء المهام', category: 'دراسة', done: false },
+                        { id: 'tu_t3', time: '20:00', title: 'عشاء عالي البروتين + راحة', category: 'تغذية', done: false }
+                    ]
+                },
+                wednesday: {
+                    id: 'wednesday',
+                    shortName: 'الأربعاء 🔥',
+                    isGymDay: true,
+                    badge: `الحصة 2 من 3 • يوم السحب (Pull) • ${analysis.modeTitle}`,
+                    title: 'الظهر + البايسبس + الكتف الخلفي (3 جولات)',
+                    subtitle: `الأوزان مضبوطة لوزن ${weight}kg وطول ${height}cm`,
+                    exercises: [
+                        {
+                            id: 'w1',
+                            name: 'سحب عالي واسع (Lat Pulldown)',
+                            muscle: 'عرض الظهر (المجنص)',
+                            reps: r,
+                            weight: scaleWeight(weight, 0.75),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1605296867304-46d5465a13f1?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Lat Pulldown proper form tutorial',
+                            tips: 'اسحب البار نحو أعلى الصدر بقيادة المرفقين للأسفل مع ثبات الجذع.'
+                        },
+                        {
+                            id: 'w2',
+                            name: 'تجديف بالبار أو الجهاز (Barbell / Chest-Supported Row)',
+                            muscle: 'سماكة وسط الظهر',
+                            reps: r,
+                            weight: scaleWeight(weight, 0.68),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1541534741688-6078c6bfb5c5?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Barbell Bent Over Row form',
+                            tips: 'حافظ على استقامة الظهر واسحب الوزن نحو البطن مع ضم لوحي الكتف.'
+                        },
+                        {
+                            id: 'w3',
+                            name: 'سحب أرضي ضيق بالكابل (Seated Cable Row)',
+                            muscle: 'الظهر الكامل',
+                            reps: r,
+                            weight: scaleWeight(weight, 0.70),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1599058917212-d750089bc07e?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Seated Cable Row form tutorial',
+                            tips: 'أبقِ صدرك مرفوعاً وتحكم في الوزن أثناء الرجوع لتحقيق أقصى تمدد.'
+                        },
+                        {
+                            id: 'w4',
+                            name: 'سحب الحبل للوجه (Face Pulls)',
+                            muscle: 'الكتف الخلفي',
+                            reps: '3 جولات × 12-15 عدة',
+                            weight: scaleWeight(weight, 0.35),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Cable Face Pull proper form',
+                            tips: 'اسحب الحبل نحو الجبهة مع تدوير الكتف للخارج لتقوية الكتف الخلفي.'
+                        },
+                        {
+                            id: 'w5',
+                            name: 'مرجحة بايسبس بالبار الزجزاج (EZ-Bar Bicep Curl)',
+                            muscle: 'البايسبس والساعد',
+                            reps: r,
+                            weight: scaleWeight(weight, 0.38),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'EZ Bar Bicep Curl proper form',
+                            tips: 'ثبّت الكوعين بجانب جذعك وانزل بالوزن ببطء خلال 3 جولات.'
+                        }
+                    ],
+                    tasks: [
+                        { id: 'w_t1', time: '08:00', title: 'وجبة الفطور والانطلاق للدراسة', category: 'تغذية', done: false },
+                        { id: 'w_t2', time: '16:30', title: 'وجبة ما قبل التمرين', category: 'تغذية', done: false },
+                        { id: 'w_t3', time: '18:00', title: 'حصة النادي (2/3): يوم السحب (ظهر وبايسبس)', category: 'رياضة', done: false },
+                        { id: 'w_t4', time: '20:30', title: 'مراجعة المساء وتحضير الدروس', category: 'دراسة', done: false }
+                    ]
+                },
+                thursday: {
+                    id: 'thursday',
+                    shortName: 'الخميس 💤',
+                    isGymDay: false,
+                    badge: 'يوم راحة واستشفاء',
+                    title: 'راحة من النادي ومراجعة الدروس',
+                    subtitle: 'استشفاء الجهاز العصبي والعضلي',
+                    exercises: [
+                        {
+                            id: 'th1',
+                            name: 'مشي خفيف وإطالات للظهر والذراعين',
+                            muscle: 'استشفاء نشط',
+                            reps: '3 جولات × 5 دقائق',
+                            weight: 0,
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Upper body recovery stretching routine',
+                            tips: 'احرص على شرب الماء الكافي وتناول احتياجك الكامل من البروتين.'
+                        }
+                    ],
+                    tasks: [
+                        { id: 'th_t1', time: '08:30', title: 'الفترة الدراسية الصباحية', category: 'دراسة', done: false },
+                        { id: 'th_t2', time: '17:30', title: 'مراجعة المواد الأساسية', category: 'دراسة', done: false }
+                    ]
+                },
+                friday: {
+                    id: 'friday',
+                    shortName: 'الجمعة 🕌',
+                    isGymDay: false,
+                    badge: 'يوم الجمعة • راحة واستشفاء تام',
+                    title: 'يوم الجمعة والراحة الأسبوعية',
+                    subtitle: 'راحة تامة من المجهود البدني وتجديد النشاط',
+                    exercises: [
+                        {
+                            id: 'fr1',
+                            name: 'استرخاء وإطالات مرونة خفيفة (Full Body Stretch)',
+                            muscle: 'استشفاء عام',
+                            reps: '3 جولات × 5 دقائق',
+                            weight: 0,
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Full body relaxation stretch routine',
+                            tips: 'استغل يوم الجمعة في الراحة الجسدية والذهنية والتغذية المتوازنة استعداداً لحصة الغد.'
+                        }
+                    ],
+                    tasks: [
+                        { id: 'fr_t1', time: '10:00', title: 'مراجعة صباحية هادئة', category: 'دراسة', done: false },
+                        { id: 'fr_t2', time: '12:30', title: 'صلاة الجمعة والغداء العائلي', category: 'شخصي', done: false },
+                        { id: 'fr_t3', time: '18:00', title: 'جلسة هادئة مع الأصدقاء / وقت حر', category: 'شخصي', done: false }
+                    ]
+                },
+                saturday: {
+                    id: 'saturday',
+                    shortName: 'السبت 🔥',
+                    isGymDay: true,
+                    badge: `الحصة 3 من 3 • الأرجل والبطن (Legs & Abs) • ${analysis.modeTitle}`,
+                    title: 'الأرجل الشاملة + عضلات البطن (3 جولات)',
+                    subtitle: `الأوزان مضبوطة لوزن ${weight}kg وطول ${height}cm`,
+                    exercises: [
+                        {
+                            id: 'sa1',
+                            name: 'سكوات بالبار أو الهاك سكوات (Barbell / Hack Squat)',
+                            muscle: 'الفخذ الأمامي والأرداف',
+                            reps: r,
+                            weight: scaleWeight(weight, 1.0),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1574680096145-d05b474e2155?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Barbell Squat proper form tutorial',
+                            tips: 'انزل بتحكم حتى يصبح الفخذ موازياً للأرض مع شد الجذع والبطن خلال 3 جولات.'
+                        },
+                        {
+                            id: 'sa2',
+                            name: 'دفع الأرجل على الجهاز (Leg Press)',
+                            muscle: 'ضخامة الأرجل الشاملة',
+                            reps: r,
+                            weight: scaleWeight(weight, 1.8),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1434608519344-49d77a699e1d?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Leg Press proper form',
+                            tips: 'لا تقفل الركبتين بالكامل في الأعلى وتحكم في النزول.'
+                        },
+                        {
+                            id: 'sa3',
+                            name: 'رفرفة أرجل خلفي على الجهاز (Leg Curl)',
+                            muscle: 'الفخذ الخلفي (Hamstrings)',
+                            reps: r,
+                            weight: scaleWeight(weight, 0.55),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1517838277536-f5f99be501cd?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Seated Leg Curl hamstring tutorial',
+                            tips: 'اثبت ثانية واحدة في قمة الانقباض لتفعيل الفخذ الخلفي.'
+                        },
+                        {
+                            id: 'sa4',
+                            name: 'رفع السمانة واقفاً (Standing Calf Raises)',
+                            muscle: 'عضلة السمانة (البطة)',
+                            reps: '3 جولات × 15-20 عدة',
+                            weight: scaleWeight(weight, 0.8),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Standing Calf Raise form',
+                            tips: 'تمدد كامل في الأسفل وانقباض قوي في الأعلى لمدة ثانية.'
+                        },
+                        {
+                            id: 'sa5',
+                            name: 'طحن البطن بالكابل أو رفع الأرجل (Cable Crunch / Leg Raises)',
+                            muscle: 'عضلات البطن (Core & Abs)',
+                            reps: '3 جولات × 15 عدة',
+                            weight: scaleWeight(weight, 0.35),
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Cable Crunch & Hanging Leg Raise form',
+                            tips: 'ازفر الهواء عند الانقباض وركز على عصر عضلات البطن.'
+                        }
+                    ],
+                    tasks: [
+                        { id: 'sa_t1', time: '09:30', title: 'مراجعة شاملة للمواد العلمية', category: 'دراسة', done: false },
+                        { id: 'sa_t2', time: '17:30', title: 'حصة النادي (3/3): الأرجل والبطن (3 جولات)', category: 'رياضة', done: false },
+                        { id: 'sa_t3', time: '20:30', title: 'وجبة بعد التمرين + استراحة المساء', category: 'تغذية', done: false }
+                    ]
+                },
+                sunday: {
+                    id: 'sunday',
+                    shortName: 'الأحد 💤',
+                    isGymDay: false,
+                    badge: 'راحة واستشفاء تام',
+                    title: 'يوم الراحة والتحضير للأسبوع الجديد',
+                    subtitle: 'استشفاء كامل ونوم مبكر',
+                    exercises: [
+                        {
+                            id: 'su1',
+                            name: 'استشفاء تام وتمدد خفيف للعضلات',
+                            muscle: 'استشفاء شامل',
+                            reps: '3 جولات × 5 دقائق',
+                            weight: 0,
+                            setsDone: [false, false, false],
+                            image: 'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?auto=format&fit=crop&w=800&q=80',
+                            videoQuery: 'Sunday full body recovery stretch',
+                            tips: 'جهز خطة أسبوعك القادم واحرص على النوم المبكر.'
+                        }
+                    ],
+                    tasks: [
+                        { id: 'su_t1', time: '10:00', title: 'مراجعة دروس الأسبوع', category: 'دراسة', done: false },
+                        { id: 'su_t2', time: '16:00', title: 'ترتيب أهداف الأسبوع الجديد', category: 'شخصي', done: false },
+                        { id: 'su_t3', time: '22:00', title: 'نوم مبكر (8 ساعات)', category: 'شخصي', done: false }
+                    ]
+                }
+            };
+        }
+
+        function getDefaultPlaylist() {
+            return [
+                {
+                    id: 'p1',
+                    title: 'نشيد حماسي للتمرين — قوة وإصرار (بدون إيقاع)',
+                    category: 'أناشيد حماسية',
+                    url: 'https://www.youtube.com/watch?v=fJ9rUzIMcZQ',
+                    isYoutubeSearch: true,
+                    searchQuery: 'أناشيد حماسية للرياضة والجيم بدون موسيقى'
+                },
+                {
+                    id: 'p2',
+                    title: 'تلاوة خاشعة تبعث الطمأنينة والتركيز',
+                    category: 'قرآن كريم',
+                    url: '',
+                    isYoutubeSearch: true,
+                    searchQuery: 'تلاوة هادئة للتركيز والدراسة'
+                },
+                {
+                    id: 'p3',
+                    title: 'مقطع صوتي تجريبي (إيقاع هادئ للتركيز)',
+                    category: 'موسيقى / تحفيز',
+                    url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+                    isYoutubeSearch: false
+                }
+            ];
+        }
+
+        // =========================================================================
+        // 3. DATABASE STORAGE PER USER (ISOLATED PROFILES)
+        // =========================================================================
+        let allProfiles = JSON.parse(localStorage.getItem('royalGymProfiles_v3')) || {};
+
+        function saveAllProfiles() {
+            localStorage.setItem('royalGymProfiles_v3', JSON.stringify(allProfiles));
+        }
+
+        function renderAuthScreen() {
+            const grid = document.getElementById('profilesGrid');
+            grid.innerHTML = '';
+
+            Object.keys(MEMBERS_META).forEach(key => {
+                const meta = MEMBERS_META[key];
+                const saved = allProfiles[key];
+                const isConfigured = saved && saved.pin;
+
+                const card = document.createElement('button');
+                card.onclick = () => selectMemberCard(key);
+                card.className = 'luxury-card rounded-3xl p-5 text-center transition hover:scale-[1.02] border border-amber-500/25 hover:border-amber-400 flex flex-col items-center space-y-2.5 group';
+                card.innerHTML = `
+                    <div class="w-14 h-14 rounded-2xl gold-btn flex items-center justify-center text-lg font-black shadow-lg group-hover:scale-105 transition">
+                        ${meta.initials}
+                    </div>
+                    <div>
+                        <h3 class="text-base font-black text-white">${meta.name} <span class="text-amber-300 text-xs">(${meta.arName})</span></h3>
+                        <p class="text-[11px] text-slate-400 mt-0.5">
+                            ${isConfigured ? `${saved.weight} kg • ${saved.height} cm` : 'إعداد الحساب لأول مرة'}
+                        </p>
+                    </div>
+                    <span class="text-[10px] font-bold px-2.5 py-1 rounded-full ${
+                        isConfigured
+                            ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                            : 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                    }">
+                        <i class="fa-solid ${isConfigured ? 'fa-lock' : 'fa-key'} ml-1"></i>
+                        ${isConfigured ? 'محمي برمز PIN' : 'اضغط لتعيين الرمز والوزن'}
+                    </span>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function selectMemberCard(key) {
+            pendingAuthUserKey = key;
+            const meta = MEMBERS_META[key];
+            const saved = allProfiles[key];
+            const isConfigured = saved && saved.pin;
+
+            document.getElementById('selectedAvatar').textContent = meta.initials;
+            document.getElementById('selectedMemberTitle').textContent = `${meta.name} (${meta.arName})`;
+            document.getElementById('pinInput').value = '';
+            document.getElementById('pinError').classList.add('hidden');
+
+            const firstTimeFields = document.getElementById('firstTimeFields');
+            if (!isConfigured) {
+                document.getElementById('selectedMemberSub').textContent = 'تفعيل الحساب الخاص وتوليد البرنامج حسب الوزن والطول';
+                document.getElementById('pinLabel').textContent = 'عيّن رمزاً سرياً خاصاً بك (4 أرقام) لا يعرفه غيرك';
+                document.getElementById('authSubmitBtnText').textContent = 'حفظ الحساب وتوليد تماريني';
+                document.getElementById('setupWeight').value = meta.defaultWeight;
+                document.getElementById('setupHeight').value = meta.defaultHeight;
+                firstTimeFields.classList.remove('hidden');
+            } else {
+                document.getElementById('selectedMemberSub').textContent = `حساب خاص ومقفل • ${saved.weight}kg / ${saved.height}cm`;
+                document.getElementById('pinLabel').textContent = `أدخل الرمز السري الخاص بـ ${meta.name}`;
+                document.getElementById('authSubmitBtnText').textContent = 'فتح الحساب';
+                firstTimeFields.classList.add('hidden');
+            }
+
+            document.getElementById('pinBox').classList.remove('hidden');
+            setTimeout(() => document.getElementById('pinInput').focus(), 100);
+        }
+
+        function closePinBox() {
+            document.getElementById('pinBox').classList.add('hidden');
+            pendingAuthUserKey = null;
+        }
+
+        function handleAuthSubmit() {
+            if (!pendingAuthUserKey) return;
+            const meta = MEMBERS_META[pendingAuthUserKey];
+            const saved = allProfiles[pendingAuthUserKey];
+            const pinVal = document.getElementById('pinInput').value.trim();
+            const errEl = document.getElementById('pinError');
+
+            if (pinVal.length < 4) {
+                errEl.textContent = 'يرجى إدخال رمز سري مكوّن من 4 أرقام على الأقل';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            if (!saved || !saved.pin) {
+                // First time creation
+                const w = parseFloat(document.getElementById('setupWeight').value) || meta.defaultWeight;
+                const h = parseFloat(document.getElementById('setupHeight').value) || meta.defaultHeight;
+
+                allProfiles[pendingAuthUserKey] = {
+                    id: pendingAuthUserKey,
+                    name: meta.name,
+                    arName: meta.arName,
+                    initials: meta.initials,
+                    pin: pinVal,
+                    weight: w,
+                    height: h,
+                    weekData: buildPersonalizedWeek(w, h),
+                    playlist: getDefaultPlaylist()
+                };
+                saveAllProfiles();
+                enterUserDashboard(pendingAuthUserKey);
+            } else {
+                // Verify PIN
+                if (pinVal !== saved.pin) {
+                    errEl.textContent = 'الرمز السري غير صحيح! لا يمكن الدخول لحساب شخص آخر.';
+                    errEl.classList.remove('hidden');
+                    return;
+                }
+                enterUserDashboard(pendingAuthUserKey);
+            }
+        }
+
+        function enterUserDashboard(userKey) {
+            currentUserKey = userKey;
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('hidden');
+            renderUserHeaderAndStats();
+            renderDaysBar();
+            renderCurrentDay();
+            renderPlaylist();
+        }
+
+        function lockProfile() {
+            const audio = document.getElementById('mainAudioElement');
+            audio.pause();
+            currentUserKey = null;
+            pendingAuthUserKey = null;
+            document.getElementById('pinBox').classList.add('hidden');
+            document.getElementById('mainApp').classList.add('hidden');
+            document.getElementById('authScreen').classList.remove('hidden');
+            renderAuthScreen();
+        }
+
+        // =========================================================================
+        // 4. USER DASHBOARD RENDERING
+        // =========================================================================
+        function getCurrentProfile() {
+            return allProfiles[currentUserKey];
+        }
+
+        function renderUserHeaderAndStats() {
+            const user = getCurrentProfile();
+            const analysis = analyzeBodyStats(user.weight, user.height);
+
+            document.getElementById('headerAvatar').textContent = user.initials;
+            document.getElementById('headerUserName').textContent = `${user.name} (${user.arName})`;
+            document.getElementById('headerBodyBadge').textContent = analysis.modeTitle;
+            document.getElementById('headerMetricsText').textContent = `برنامج 3 أيام/أسبوع • 3 جولات لكل تمرين`;
+
+            document.getElementById('statWeightHeight').textContent = `${user.weight} kg • ${user.height} cm`;
+            document.getElementById('statBMI').textContent = `${analysis.bmi}`;
+            document.getElementById('statProtein').textContent = `${analysis.protein} g / يوم`;
+            document.getElementById('statCalories').textContent = `${analysis.calories} kcal`;
+
+            document.getElementById('editWeightInput').value = user.weight;
+            document.getElementById('editHeightInput').value = user.height;
+        }
+
+        function renderDaysBar() {
+            const user = getCurrentProfile();
+            const container = document.getElementById('daysContainer');
+            container.innerHTML = '';
+
+            dayOrder.forEach(key => {
+                const day = user.weekData[key];
+                const isSelected = key === currentDayKey;
+                const btn = document.createElement('button');
+                btn.onclick = () => {
+                    currentDayKey = key;
+                    renderDaysBar();
+                    renderCurrentDay();
+                };
+                btn.className = `px-4 py-2.5 rounded-2xl font-bold text-xs whitespace-nowrap transition flex flex-col items-center min-w-[85px] border ${
+                    isSelected
+                        ? 'gold-btn border-amber-300'
+                        : day.isGymDay
+                            ? 'bg-slate-900/95 text-amber-300 border-amber-500/35 hover:border-amber-400'
+                            : 'bg-slate-950/70 text-slate-400 border-slate-800 hover:text-white'
+                }`;
+                btn.innerHTML = `
+                    <span>${day.shortName}</span>
+                    <span class="text-[9px] mt-0.5 ${isSelected ? 'text-black font-extrabold' : day.isGymDay ? 'text-amber-400/90' : 'text-slate-500'}">
+                        ${day.isGymDay ? 'حصة تمرين' : 'راحة وتنظيم'}
+                    </span>
+                `;
+                container.appendChild(btn);
+            });
+        }
+
+        function renderCurrentDay() {
+            const user = getCurrentProfile();
+            const day = user.weekData[currentDayKey];
+
+            document.getElementById('dayBadge').textContent = day.badge;
+            document.getElementById('dayTitle').textContent = day.title;
+            document.getElementById('daySubtitle').textContent = day.subtitle;
+
+            renderExercises();
+            renderTasks();
+            updateDayProgress();
+        }
+
+        function renderExercises() {
+            const user = getCurrentProfile();
+            const exercises = user.weekData[currentDayKey].exercises;
+            const container = document.getElementById('exercisesList');
+            container.innerHTML = '';
+
+            exercises.forEach((ex, exIndex) => {
+                // Ensure strictly 3 sets
+                if (ex.setsDone.length !== 3) {
+                    ex.setsDone = [false, false, false];
+                }
+                const allSetsDone = ex.setsDone.every(Boolean);
+
+                const setsHTML = ex.setsDone.map((done, setIdx) => `
+                    <button onclick="toggleSet(${exIndex}, ${setIdx})" class="h-11 rounded-xl font-extrabold text-xs transition flex items-center justify-center gap-1.5 border ${
+                        done
+                            ? 'gold-btn border-amber-300'
+                            : 'bg-slate-950 text-slate-300 border-slate-800 hover:border-amber-500/40'
+                    }">
+                        <i class="fa-solid ${done ? 'fa-check' : 'fa-circle-dot'} text-[11px]"></i>
+                        <span>جولة ${setIdx + 1}</span>
+                    </button>
+                `).join('');
+
+                const card = document.createElement('div');
+                card.className = `luxury-card rounded-3xl overflow-hidden transition border ${allSetsDone ? 'gold-border-glow' : 'border-amber-500/15'}`;
+                card.innerHTML = `
+                    <div class="grid grid-cols-1 sm:grid-cols-3">
+                        <!-- Exercise Photo & Video Trigger -->
+                        <div class="relative h-48 sm:h-auto bg-slate-950 overflow-hidden group">
+                            <img src="${ex.image}" alt="${ex.name}" onerror="this.src='https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80'" class="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-85">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
+                            <span class="absolute top-3 right-3 bg-black/80 backdrop-blur-md text-amber-300 border border-amber-500/30 px-2.5 py-1 rounded-lg text-[11px] font-bold">
+                                ${ex.muscle}
+                            </span>
+                            <button onclick="openVideoModal(${exIndex})" class="absolute bottom-3 right-3 left-3 gold-btn text-xs py-2.5 px-3 rounded-xl flex items-center justify-center gap-2 shadow-lg transition">
+                                <i class="fa-solid fa-circle-play text-sm"></i>
+                                <span>فيديو الشرح والأداء الصحيح</span>
+                            </button>
+                        </div>
+
+                        <!-- Exercise Info & 3 Sets Tracker -->
+                        <div class="sm:col-span-2 p-4 flex flex-col justify-between space-y-3">
+                            <div>
+                                <div class="flex items-start justify-between gap-2">
+                                    <h4 class="font-black text-base text-white leading-snug">${ex.name}</h4>
+                                    <button onclick="deleteExercise(${exIndex})" class="text-slate-500 hover:text-rose-400 text-xs px-1.5 py-1">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-1">${ex.tips}</p>
+                            </div>
+
+                            <!-- Recommended Weight & Reps -->
+                            <div class="flex flex-wrap items-center justify-between gap-2 bg-slate-950/90 p-2.5 rounded-2xl border border-slate-800">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs text-slate-400 font-semibold">النظام:</span>
+                                    <span class="text-xs font-extrabold text-amber-300 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/25">${ex.reps}</span>
+                                </div>
+                                <div class="flex items-center gap-1.5">
+                                    <span class="text-xs text-slate-400 font-semibold">الوزن المقترح لك:</span>
+                                    <input type="number" value="${ex.weight}" onchange="updateWeight(${exIndex}, this.value)" class="w-16 bg-slate-900 border border-amber-500/40 rounded-lg px-2 py-1 text-center text-xs font-black text-amber-300 focus:outline-none">
+                                    <span class="text-xs text-amber-400 font-bold">kg</span>
+                                </div>
+                            </div>
+
+                            <!-- 3 Sets Grid -->
+                            <div>
+                                <div class="flex justify-between items-center mb-1.5">
+                                    <span class="text-[11px] font-bold text-slate-400">سجّل الجولات الثلاث (يبدأ مؤقت الراحة تلقائياً):</span>
+                                    ${allSetsDone ? '<span class="text-[11px] font-black text-amber-300"><i class="fa-solid fa-crown ml-1"></i>أنهيت 3 جولات!</span>' : ''}
+                                </div>
+                                <div class="grid grid-cols-3 gap-2.5">
+                                    ${setsHTML}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function renderTasks() {
+            const user = getCurrentProfile();
+            const tasks = user.weekData[currentDayKey].tasks;
+            const container = document.getElementById('tasksList');
+            container.innerHTML = '';
+
+            tasks.sort((a, b) => a.time.localeCompare(b.time));
+
+            const catColors = {
+                'دراسة': 'text-amber-300 bg-amber-500/10 border-amber-500/30',
+                'تغذية': 'text-emerald-300 bg-emerald-500/10 border-emerald-500/30',
+                'رياضة': 'text-sky-300 bg-sky-500/10 border-sky-500/30',
+                'شخصي': 'text-purple-300 bg-purple-500/10 border-purple-500/30'
+            };
+
+            tasks.forEach((task, idx) => {
+                const badgeStyle = catColors[task.category] || catColors['شخصي'];
+                const item = document.createElement('div');
+                item.className = `luxury-card rounded-2xl p-3.5 flex items-center justify-between gap-3 transition border ${
+                    task.done ? 'border-amber-500/40 opacity-75' : 'border-slate-800'
+                }`;
+                item.innerHTML = `
+                    <div class="flex items-center gap-3 flex-1 cursor-pointer" onclick="toggleTask(${idx})">
+                        <div class="w-6 h-6 rounded-lg flex items-center justify-center border transition ${
+                            task.done ? 'gold-btn border-amber-300' : 'border-slate-600 bg-slate-950'
+                        }">
+                            ${task.done ? '<i class="fa-solid fa-check text-xs font-black text-black"></i>' : ''}
+                        </div>
+                        <div class="flex-1">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="text-xs font-mono font-extrabold text-amber-200 bg-slate-900 px-2 py-0.5 rounded-md border border-slate-800">${task.time}</span>
+                                <span class="text-[10px] font-bold px-2 py-0.5 rounded-md border ${badgeStyle}">${task.category}</span>
+                            </div>
+                            <p class="text-sm font-bold mt-1 ${task.done ? 'line-through text-slate-400' : 'text-white'}">${task.title}</p>
+                        </div>
+                    </div>
+                    <button onclick="deleteTask(${idx})" class="text-slate-500 hover:text-rose-400 px-2 py-1">
+                        <i class="fa-solid fa-trash-can text-xs"></i>
+                    </button>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function updateDayProgress() {
+            const user = getCurrentProfile();
+            const day = user.weekData[currentDayKey];
+
+            const totalTasks = day.tasks.length;
+            const doneTasks = day.tasks.filter(t => t.done).length;
+
+            let totalSets = 0;
+            let doneSets = 0;
+            day.exercises.forEach(ex => {
+                totalSets += ex.setsDone.length;
+                doneSets += ex.setsDone.filter(Boolean).length;
+            });
+
+            document.getElementById('tasksStat').textContent = `${doneTasks}/${totalTasks}`;
+            document.getElementById('setsStat').textContent = `${doneSets}/${totalSets}`;
+
+            const total = totalTasks + totalSets;
+            const done = doneTasks + doneSets;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+
+            document.getElementById('progressPercent').textContent = `${pct}%`;
+            document.getElementById('progressBar').style.width = `${pct}%`;
+        }
+
+        function toggleSet(exIndex, setIdx) {
+            const user = getCurrentProfile();
+            const current = user.weekData[currentDayKey].exercises[exIndex].setsDone[setIdx];
+            user.weekData[currentDayKey].exercises[exIndex].setsDone[setIdx] = !current;
+            saveAllProfiles();
+            renderExercises();
+            updateDayProgress();
+
+            if (!current) {
+                const analysis = analyzeBodyStats(user.weight, user.height);
+                setTimer(analysis.restRecommended);
+                startTimerSilent();
+            }
+        }
+
+        function updateWeight(exIndex, val) {
+            const user = getCurrentProfile();
+            user.weekData[currentDayKey].exercises[exIndex].weight = val;
+            saveAllProfiles();
+        }
+
+        function toggleTask(idx) {
+            const user = getCurrentProfile();
+            user.weekData[currentDayKey].tasks[idx].done = !user.weekData[currentDayKey].tasks[idx].done;
+            saveAllProfiles();
+            renderTasks();
+            updateDayProgress();
+        }
+
+        function deleteTask(idx) {
+            const user = getCurrentProfile();
+            user.weekData[currentDayKey].tasks.splice(idx, 1);
+            saveAllProfiles();
+            renderTasks();
+            updateDayProgress();
+        }
+
+        function deleteExercise(exIndex) {
+            if (confirm('هل تريد حذف هذا التمرين من جدولك؟')) {
+                const user = getCurrentProfile();
+                user.weekData[currentDayKey].exercises.splice(exIndex, 1);
+                saveAllProfiles();
+                renderExercises();
+                updateDayProgress();
+            }
+        }
+
+        function resetDayProgress() {
+            if (confirm('هل تريد تصفير علامات الإنجاز لهذا اليوم؟')) {
+                const user = getCurrentProfile();
+                user.weekData[currentDayKey].tasks.forEach(t => t.done = false);
+                user.weekData[currentDayKey].exercises.forEach(ex => ex.setsDone = [false, false, false]);
+                saveAllProfiles();
+                renderCurrentDay();
+            }
+        }
+
+        // =========================================================================
+        // 5. NAVIGATION TABS
+        // =========================================================================
+        function switchTab(tab) {
+            activeTab = tab;
+            const tabs = ['workout', 'schedule', 'playlist', 'body'];
+            tabs.forEach(t => {
+                const sec = document.getElementById(`section_${t}`);
+                const btn = document.getElementById(`tabBtn_${t}`);
+                if (t === tab) {
+                    sec.classList.remove('hidden');
+                    btn.className = 'py-2.5 px-2 rounded-xl font-extrabold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1.5 gold-btn';
+                } else {
+                    sec.classList.add('hidden');
+                    btn.className = 'py-2.5 px-2 rounded-xl font-extrabold text-xs transition flex flex-col sm:flex-row items-center justify-center gap-1.5 text-slate-400 hover:text-white';
+                }
+            });
+
+            // Show/hide day selector bar only on workout & schedule tabs
+            const showDayBar = (tab === 'workout' || tab === 'schedule');
+            document.getElementById('daysBarSection').classList.toggle('hidden', !showDayBar);
+            document.getElementById('dayBannerSection').classList.toggle('hidden', !showDayBar);
+        }
+
+        // =========================================================================
+        // 6. PERSONAL AUDIO & PLAYLIST HUB
+        // =========================================================================
+        function renderPlaylist() {
+            const user = getCurrentProfile();
+            const container = document.getElementById('playlistContainer');
+            container.innerHTML = '';
+
+            if (!user.playlist || user.playlist.length === 0) {
+                user.playlist = getDefaultPlaylist();
+            }
+
+            user.playlist.forEach((track, idx) => {
+                const isCurrent = idx === currentTrackIndex;
+                const item = document.createElement('div');
+                item.className = `p-3.5 rounded-2xl flex items-center justify-between gap-3 border transition ${
+                    isCurrent ? 'bg-amber-500/15 border-amber-400' : 'bg-slate-950/80 border-slate-800'
+                }`;
+                item.innerHTML = `
+                    <div class="flex items-center gap-3 min-w-0 flex-1 cursor-pointer" onclick="playTrack(${idx})">
+                        <div class="w-10 h-10 rounded-xl ${isCurrent ? 'gold-btn' : 'bg-slate-900 text-amber-400 border border-slate-700'} flex items-center justify-center shrink-0">
+                            <i class="fa-solid ${isCurrent ? 'fa-volume-high' : 'fa-play'} text-xs"></i>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <span class="text-[10px] font-bold text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">${track.category}</span>
+                            <h4 class="text-xs sm:text-sm font-bold text-white truncate mt-1">${track.title}</h4>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2 shrink-0">
+                        <button onclick="playTrack(${idx})" class="text-xs font-bold px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-amber-300 border border-amber-500/30">
+                            تشغيل
+                        </button>
+                        <button onclick="deleteTrack(${idx})" class="text-slate-500 hover:text-rose-400 px-2 py-1">
+                            <i class="fa-solid fa-trash-can text-xs"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function addCustomTrack() {
+            const title = document.getElementById('trackTitleInput').value.trim();
+            const category = document.getElementById('trackCategoryInput').value;
+            const url = document.getElementById('trackUrlInput').value.trim();
+
+            if (!title) return alert('يرجى كتابة اسم النشيد أو المقطع الصوتي');
+
+            const user = getCurrentProfile();
+            user.playlist.push({
+                id: 'tr_' + Date.now(),
+                title,
+                category,
+                url,
+                isYoutubeSearch: !url,
+                searchQuery: title
+            });
+
+            document.getElementById('trackTitleInput').value = '';
+            document.getElementById('trackUrlInput').value = '';
+            saveAllProfiles();
+            renderPlaylist();
+        }
+
+        function handleLocalAudioUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const objectUrl = URL.createObjectURL(file);
+            const user = getCurrentProfile();
+
+            user.playlist.unshift({
+                id: 'local_' + Date.now(),
+                title: file.name.replace(/\.[^/.]+$/, ""),
+                category: 'ملف من جهازي 📱',
+                url: objectUrl,
+                isLocalBlob: true
+            });
+            renderPlaylist();
+            playTrack(0);
+        }
+
+        function extractYouTubeId(url) {
+            if (!url) return null;
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function playTrack(idx) {
+            const user = getCurrentProfile();
+            const track = user.playlist[idx];
+            if (!track) return;
+
+            currentTrackIndex = idx;
+            renderPlaylist();
+
+            document.getElementById('nowPlayingTitle').textContent = track.title;
+            document.getElementById('nowPlayingSub').textContent = `${track.category} • حساب ${user.name}`;
+
+            const audio = document.getElementById('mainAudioElement');
+            const extBox = document.getElementById('externalPlayerBox');
+            const ytId = extractYouTubeId(track.url);
+
+            if (ytId) {
+                audio.pause();
+                extBox.classList.remove('hidden');
+                extBox.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${ytId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                switchTab('playlist');
+            } else if (track.url && (track.url.endsWith('.mp3') || track.url.endsWith('.m4a') || track.url.endsWith('.wav') || track.isLocalBlob)) {
+                extBox.classList.add('hidden');
+                extBox.innerHTML = '';
+                audio.src = track.url;
+                audio.play();
+                document.getElementById('playPauseBtn').innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
+            } else if (track.url) {
+                window.open(track.url, '_blank');
+            } else {
+                const q = encodeURIComponent(track.searchQuery || track.title);
+                window.open(`https://www.youtube.com/results?search_query=${q}`, '_blank');
+            }
+        }
+
+        function toggleAudioPlay() {
+            const audio = document.getElementById('mainAudioElement');
+            const btn = document.getElementById('playPauseBtn');
+            if (!audio.src) {
+                playTrack(currentTrackIndex);
+                return;
+            }
+            if (audio.paused) {
+                audio.play();
+                btn.innerHTML = '<i class="fa-solid fa-pause text-xs"></i>';
+            } else {
+                audio.pause();
+                btn.innerHTML = '<i class="fa-solid fa-play text-xs"></i>';
+            }
+        }
+
+        function prevTrack() {
+            const user = getCurrentProfile();
+            if (!user.playlist.length) return;
+            currentTrackIndex = (currentTrackIndex - 1 + user.playlist.length) % user.playlist.length;
+            playTrack(currentTrackIndex);
+        }
+
+        function nextTrack() {
+            const user = getCurrentProfile();
+            if (!user.playlist.length) return;
+            currentTrackIndex = (currentTrackIndex + 1) % user.playlist.length;
+            playTrack(currentTrackIndex);
+        }
+
+        function deleteTrack(idx) {
+            const user = getCurrentProfile();
+            user.playlist.splice(idx, 1);
+            saveAllProfiles();
+            renderPlaylist();
+        }
+
+        // =========================================================================
+        // 7. BODY METRICS & PIN UPDATE
+        // =========================================================================
+        function saveMetricsAndRecalculate() {
+            const user = getCurrentProfile();
+            const newW = parseFloat(document.getElementById('editWeightInput').value);
+            const newH = parseFloat(document.getElementById('editHeightInput').value);
+
+            if (!newW || !newH || newW < 30 || newH < 120) {
+                return alert('يرجى إدخال وزن وطول صحيحين');
+            }
+
+            user.weight = newW;
+            user.height = newH;
+            user.weekData = buildPersonalizedWeek(newW, newH);
+            saveAllProfiles();
+            renderUserHeaderAndStats();
+            renderDaysBar();
+            renderCurrentDay();
+            switchTab('workout');
+            alert(`تم تحديث برنامج ${user.name} والأوزان المقترحة (3 جولات) بناءً على وزن ${newW}kg وطول ${newH}cm بنجاح!`);
+        }
+
+        function updateUserPin() {
+            const newPin = document.getElementById('newPinInput').value.trim();
+            if (newPin.length < 4) return alert('يرجى إدخال رمز سري من 4 أرقام على الأقل');
+            const user = getCurrentProfile();
+            user.pin = newPin;
+            document.getElementById('newPinInput').value = '';
+            saveAllProfiles();
+            alert('تم تحديث الرمز السري الخاص بحسابك بنجاح!');
+        }
+
+        // =========================================================================
+        // 8. VIDEO MODAL, TIMER, SWAP & ADD MODALS
+        // =========================================================================
+        function openVideoModal(exIndex) {
+            const user = getCurrentProfile();
+            const ex = user.weekData[currentDayKey].exercises[exIndex];
+
+            document.getElementById('modalMuscleTag').textContent = `${ex.muscle} • ${ex.reps}`;
+            document.getElementById('modalExerciseName').textContent = ex.name;
+            document.getElementById('modalExerciseTips').textContent = ex.tips;
+
+            const ytSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(ex.videoQuery || ex.name)}`;
+            document.getElementById('modalYoutubeBtn').href = ex.customVideoUrl || ytSearchUrl;
+
+            const container = document.getElementById('videoContainer');
+            const ytId = extractYouTubeId(ex.customVideoUrl);
+
+            if (ytId) {
+                container.innerHTML = `<iframe class="w-full h-full" src="https://www.youtube.com/embed/${ytId}" frameborder="0" allowfullscreen></iframe>`;
+            } else if (ex.customVideoUrl && ex.customVideoUrl.endsWith('.mp4')) {
+                container.innerHTML = `<video src="${ex.customVideoUrl}" controls autoplay loop class="w-full h-full object-cover"></video>`;
+            } else {
+                container.innerHTML = `
+                    <img src="${ex.image}" class="absolute inset-0 w-full h-full object-cover opacity-40 blur-[1px]">
+                    <div class="relative z-10 flex flex-col items-center text-center p-4">
+                        <div class="w-20 h-20 rounded-full bg-amber-500/20 border-2 border-amber-400 flex items-center justify-center animate-float mb-3 shadow-xl">
+                            <i class="fa-solid fa-dumbbell text-3xl text-amber-300"></i>
+                        </div>
+                        <span class="bg-black/85 border border-amber-500/40 px-3.5 py-1 rounded-full text-xs font-extrabold text-amber-300 mb-1">
+                            الوزن المقترح لك: ${ex.weight} kg • 3 جولات متقنة
+                        </span>
+                        <p class="text-xs text-slate-200 max-w-xs mt-1">اضغط على الزر الأحمر بالأسفل لمشاهدة الفيديو التوضيحي الكامل للحركة على YouTube</p>
+                    </div>
+                `;
+            }
+
+            const modal = document.getElementById('videoModal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeVideoModal() {
+            const modal = document.getElementById('videoModal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        // REST TIMER
+        let timerSeconds = 90;
+        let timerInterval = null;
+        let timerRunning = false;
+
+        function formatTime(sec) {
+            const m = String(Math.floor(sec / 60)).padStart(2, '0');
+            const s = String(sec % 60).padStart(2, '0');
+            return `${m}:${s}`;
+        }
+
+        function updateTimerUI() {
+            const formatted = formatTime(timerSeconds);
+            document.getElementById('timerDisplay').textContent = formatted;
+            document.getElementById('headerTimerText').textContent = timerRunning ? formatted : 'الراحة';
+        }
+
+        function setTimer(sec) {
+            clearInterval(timerInterval);
+            timerRunning = false;
+            timerSeconds = sec;
+            updateTimerUI();
+            document.getElementById('startPauseTimerBtn').textContent = 'بدء المؤقت';
+        }
+
+        function startTimerSilent() {
+            clearInterval(timerInterval);
+            timerRunning = true;
+            document.getElementById('startPauseTimerBtn').textContent = 'إيقاف مؤقت';
+            timerInterval = setInterval(() => {
+                if (timerSeconds > 0) {
+                    timerSeconds--;
+                    updateTimerUI();
+                } else {
+                    clearInterval(timerInterval);
+                    timerRunning = false;
+                    playBeep();
+                    document.getElementById('headerTimerText').textContent = 'انتهت! 🔥';
+                    document.getElementById('startPauseTimerBtn').textContent = 'بدء المؤقت';
+                }
+            }, 1000);
+        }
+
+        function toggleTimer() {
+            if (timerRunning) {
+                clearInterval(timerInterval);
+                timerRunning = false;
+                document.getElementById('startPauseTimerBtn').textContent = 'استئناف';
+                updateTimerUI();
+            } else {
+                startTimerSilent();
+            }
+        }
+
+        function resetTimer() { setTimer(90); }
+
+        function playBeep() {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                osc.connect(ctx.destination);
+                osc.frequency.value = 880;
+                osc.start();
+                setTimeout(() => osc.stop(), 400);
+            } catch (e) {}
+        }
+
+        function openTimerModal() {
+            document.getElementById('timerModal').classList.remove('hidden');
+            document.getElementById('timerModal').classList.add('flex');
+        }
+        function closeTimerModal() {
+            document.getElementById('timerModal').classList.add('hidden');
+            document.getElementById('timerModal').classList.remove('flex');
+        }
+
+        // SWAP DAYS
+        function openSwapModal() {
+            document.getElementById('swapDay1').value = currentDayKey;
+            document.getElementById('swapModal').classList.remove('hidden');
+            document.getElementById('swapModal').classList.add('flex');
+        }
+        function closeSwapModal() {
+            document.getElementById('swapModal').classList.add('hidden');
+            document.getElementById('swapModal').classList.remove('flex');
+        }
+        function confirmSwapDays() {
+            const d1 = document.getElementById('swapDay1').value;
+            const d2 = document.getElementById('swapDay2').value;
+            if (d1 === d2) return alert('اختر يومين مختلفين');
+
+            const user = getCurrentProfile();
+            const dayNamesBase = {
+                monday: 'الإثنين', tuesday: 'الثلاثاء', wednesday: 'الأربعاء',
+                thursday: 'الخميس', friday: 'الجمعة', saturday: 'السبت', sunday: 'الأحد'
+            };
+
+            const temp = {
+                isGymDay: user.weekData[d1].isGymDay,
+                badge: user.weekData[d1].badge,
+                title: user.weekData[d1].title,
+                subtitle: user.weekData[d1].subtitle,
+                exercises: user.weekData[d1].exercises
+            };
+
+            user.weekData[d1].isGymDay = user.weekData[d2].isGymDay;
+            user.weekData[d1].badge = user.weekData[d2].badge;
+            user.weekData[d1].title = user.weekData[d2].title;
+            user.weekData[d1].subtitle = user.weekData[d2].subtitle;
+            user.weekData[d1].exercises = user.weekData[d2].exercises;
+
+            user.weekData[d2].isGymDay = temp.isGymDay;
+            user.weekData[d2].badge = temp.badge;
+            user.weekData[d2].title = temp.title;
+            user.weekData[d2].subtitle = temp.subtitle;
+            user.weekData[d2].exercises = temp.exercises;
+
+            [d1, d2].forEach(k => {
+                const icon = user.weekData[k].isGymDay ? '🔥' : '💤';
+                user.weekData[k].shortName = `${dayNamesBase[k]} ${icon}`;
+            });
+
+            saveAllProfiles();
+            renderDaysBar();
+            renderCurrentDay();
+            closeSwapModal();
+        }
+
+        // ADD EXERCISE & TASK
+        function openAddExerciseModal() {
+            document.getElementById('addExerciseModal').classList.remove('hidden');
+            document.getElementById('addExerciseModal').classList.add('flex');
+        }
+        function closeAddExerciseModal() {
+            document.getElementById('addExerciseModal').classList.add('hidden');
+            document.getElementById('addExerciseModal').classList.remove('flex');
+        }
+        function saveNewExercise() {
+            const name = document.getElementById('newExName').value.trim();
+            const muscle = document.getElementById('newExMuscle').value.trim() || 'عضلة مستهدفة';
+            const reps = document.getElementById('newExReps').value.trim() || '3 جولات × 10-12';
+            const image = document.getElementById('newExImage').value.trim() || 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=800&q=80';
+            const customVideoUrl = document.getElementById('newExVideo').value.trim();
+            const tips = document.getElementById('newExTips').value.trim() || 'حافظ على التحكم الكامل في الوزن خلال الجولات الثلاث.';
+
+            if (!name) return alert('أدخل اسم التمرين');
+
+            const user = getCurrentProfile();
+            user.weekData[currentDayKey].exercises.push({
+                id: 'ex_' + Date.now(),
+                name,
+                muscle,
+                reps,
+                weight: scaleWeight(user.weight, 0.3),
+                setsDone: [false, false, false],
+                image,
+                customVideoUrl,
+                videoQuery: name + ' proper form',
+                tips
+            });
+
+            document.getElementById('newExName').value = '';
+            saveAllProfiles();
+            renderExercises();
+            updateDayProgress();
+            closeAddExerciseModal();
+        }
+
+        function openAddTaskModal() {
+            document.getElementById('addTaskModal').classList.remove('hidden');
+            document.getElementById('addTaskModal').classList.add('flex');
+        }
+        function closeAddTaskModal() {
+            document.getElementById('addTaskModal').classList.add('hidden');
+            document.getElementById('addTaskModal').classList.remove('flex');
+        }
+        function saveNewTask() {
+            const time = document.getElementById('newTaskTime').value || '16:00';
+            const title = document.getElementById('newTaskTitle').value.trim();
+            const category = document.getElementById('newTaskCategory').value;
+            if (!title) return alert('أدخل عنوان المهمة');
+
+            const user = getCurrentProfile();
+            user.weekData[currentDayKey].tasks.push({
+                id: 't_' + Date.now(),
+                time,
+                title,
+                category,
+                done: false
+            });
+
+            document.getElementById('newTaskTitle').value = '';
+            saveAllProfiles();
+            renderTasks();
+            updateDayProgress();
+            closeAddTaskModal();
+        }
+
+        window.addEventListener('DOMContentLoaded', renderAuthScreen);
+    </script>
+</body>
+</html>
